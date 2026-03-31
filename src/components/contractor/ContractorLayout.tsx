@@ -5,14 +5,13 @@ import {
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar,
 } from "@/components/ui/sidebar";
 import { NavLink } from "@/components/NavLink";
-import { LayoutDashboard, BarChart3, ShoppingBag, Send, Hammer, Bookmark, UserCircle, Bell, LogOut } from "lucide-react";
+import { LayoutDashboard, BarChart3, ShoppingBag, Hammer, Bookmark, UserCircle, Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const items = [
   { title: "Overview", url: "/contractor", icon: LayoutDashboard },
   { title: "Analytics", url: "/contractor/analytics", icon: BarChart3 },
   { title: "Marketplace", url: "/contractor/marketplace", icon: ShoppingBag },
-  { title: "Applied Jobs", url: "/contractor/applied", icon: Send },
   { title: "Current Jobs", url: "/contractor/current", icon: Hammer },
   { title: "Saved Jobs", url: "/contractor/saved", icon: Bookmark },
   { title: "Profile", url: "/contractor/profile", icon: UserCircle },

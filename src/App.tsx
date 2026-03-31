@@ -20,7 +20,6 @@ import ContractorLayout from "./components/contractor/ContractorLayout";
 import ContractorOverview from "./pages/contractor/Overview";
 import ContractorAnalytics from "./pages/contractor/Analytics";
 import Marketplace from "./pages/contractor/Marketplace";
-import AppliedJobs from "./pages/contractor/AppliedJobs";
 import CurrentJobs from "./pages/contractor/CurrentJobs";
 import SavedJobs from "./pages/contractor/SavedJobs";
 import ContractorProfile from "./pages/contractor/Profile";
@@ -71,7 +70,6 @@ function AppRoutes() {
         <Route index element={<ContractorOverview />} />
         <Route path="analytics" element={<ContractorAnalytics />} />
         <Route path="marketplace" element={<Marketplace />} />
-        <Route path="applied" element={<AppliedJobs />} />
         <Route path="current" element={<CurrentJobs />} />
         <Route path="saved" element={<SavedJobs />} />
         <Route path="profile" element={<ContractorProfile />} />

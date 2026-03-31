@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { getNotifications, markNotificationRead } from "@/lib/mock-db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Bell, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

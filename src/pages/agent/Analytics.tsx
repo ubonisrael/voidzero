@@ -15,7 +15,6 @@ export default function AgentAnalytics() {
   const statusData = [
     { name: "Draft", value: jobs.filter(j => j.status === "draft").length },
     { name: "Published", value: jobs.filter(j => j.status === "published").length },
-    { name: "Pending", value: jobs.filter(j => j.status === "pending").length },
     { name: "In Progress", value: jobs.filter(j => j.status === "in_progress").length },
     { name: "Completed", value: completed.length },
   ].filter(d => d.value > 0);

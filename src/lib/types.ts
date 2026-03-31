@@ -25,21 +25,9 @@ export interface Job {
   priority: string;
   description: string;
   jobAmount: number;
-  negotiable: boolean;
-  status: "draft" | "published" | "pending" | "in_progress" | "completed";
+  status: "draft" | "published" | "in_progress" | "completed";
   contractorId?: string;
   agentId: string;
-  bids: Bid[];
-  createdAt: string;
-}
-
-export interface Bid {
-  id: string;
-  contractorId: string;
-  jobId: string;
-  bidAmount: number;
-  message: string;
-  status: "pending" | "accepted" | "rejected";
   createdAt: string;
 }
 

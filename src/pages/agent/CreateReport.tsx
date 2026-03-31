@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CreateReport() {
@@ -18,7 +17,6 @@ export default function CreateReport() {
   const [description, setDescription] = useState("");
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [jobAmount, setJobAmount] = useState("");
-  const [negotiable, setNegotiable] = useState(false);
 
   const toggleIssue = (issue: string) => {
     setSelectedIssues(prev => prev.includes(issue) ? prev.filter(i => i !== issue) : [...prev, issue]);
@@ -34,8 +32,8 @@ export default function CreateReport() {
       id: `job-${Date.now()}`,
       title, description, issues: selectedIssues,
       category: mainCategory, priority,
-      jobAmount: parseFloat(jobAmount), negotiable,
-      status, agentId: user!.id, bids: [],
+      jobAmount: parseFloat(jobAmount),
+      status, agentId: user!.id,
       createdAt: new Date().toISOString(),
     };
     createJob(job);
@@ -76,18 +74,9 @@ export default function CreateReport() {
             <Label htmlFor="desc">Description</Label>
             <Textarea id="desc" value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the work required..." rows={4} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="amount">Job Amount (£)</Label>
-              <Input id="amount" type="number" value={jobAmount} onChange={e => setJobAmount(e.target.value)} placeholder="500" />
-            </div>
-            <div className="space-y-2">
-              <Label>Negotiable</Label>
-              <div className="flex items-center gap-2 pt-2">
-                <Switch checked={negotiable} onCheckedChange={setNegotiable} />
-                <span className="text-sm text-muted-foreground">{negotiable ? "Yes" : "No"}</span>
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="amount">Job Amount (£)</Label>
+            <Input id="amount" type="number" value={jobAmount} onChange={e => setJobAmount(e.target.value)} placeholder="500" />
           </div>
         </CardContent>
       </Card>
