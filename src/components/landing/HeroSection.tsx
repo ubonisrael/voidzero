@@ -35,7 +35,7 @@ const HeroSection = () => {
           <div className="rounded-xl border shadow-2xl shadow-primary/10 overflow-hidden">
             <img
               src={dashboardPreview}
-              alt="VoidZero dashboard showing repair jobs, contractor bids, and analytics"
+              alt="VoidZero dashboard showing repair jobs, contractor marketplace, and analytics"
               width={1200}
               height={800}
               className="w-full"

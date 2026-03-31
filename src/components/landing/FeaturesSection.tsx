@@ -2,9 +2,9 @@ import { Zap, Store, LayoutDashboard, Bell, DollarSign, TrendingUp } from "lucid
 
 const features = [
   { icon: Zap, title: "Inspection-to-Job Automation", desc: "Convert inspection issues into structured repair jobs automatically." },
-  { icon: Store, title: "Contractor Bidding Marketplace", desc: "A transparent marketplace where contractors compete for work." },
+  { icon: Store, title: "Job Claiming Marketplace", desc: "A first-come, first-served marketplace where contractors claim available jobs." },
   { icon: LayoutDashboard, title: "Job Tracking Dashboard", desc: "Real-time overview of all property turnover jobs and statuses." },
-  { icon: Bell, title: "Smart Notifications", desc: "Get notified instantly when bids arrive or job statuses change." },
+  { icon: Bell, title: "Smart Notifications", desc: "Get notified instantly when jobs are claimed or statuses change." },
   { icon: DollarSign, title: "Financial Tracking", desc: "Track payments, agent commissions, and contractor earnings." },
   { icon: TrendingUp, title: "Analytics & Reports", desc: "Actionable insights on jobs completed, earnings, and performance." },
 ];

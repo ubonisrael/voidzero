@@ -3,7 +3,7 @@ import { Upload, Cog, Handshake } from "lucide-react";
 const steps = [
   { icon: Upload, num: "01", title: "Upload Inspection", desc: "Agent uploads or generates a checkout inspection report for the property." },
   { icon: Cog, num: "02", title: "Auto-Generate Jobs", desc: "The system converts issues into repair jobs and publishes them to the marketplace." },
-  { icon: Handshake, num: "03", title: "Contractors Bid", desc: "Contractors bid for the job and the agent selects the best offer." },
+  { icon: Handshake, num: "03", title: "Contractors Claim", desc: "Contractors claim available jobs instantly — first come, first served." },
 ];
 
 const SolutionSection = () => (

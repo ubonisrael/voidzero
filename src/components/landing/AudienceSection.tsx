@@ -4,14 +4,14 @@ import { Building2, HardHat, CheckCircle2, ArrowRight } from "lucide-react";
 
 const agentBenefits = [
   "Post property repair jobs easily",
-  "Review contractor bids side-by-side",
+  "Contractors claim jobs instantly",
   "Track job progress in real time",
   "Earn commission on completed work",
 ];
 
 const contractorBenefits = [
   "Discover available repair jobs nearby",
-  "Submit competitive bids",
+  "Claim jobs instantly",
   "Manage your current jobs efficiently",
   "Track earnings and payment history",
 ];
@@ -43,14 +43,14 @@ const AudienceSection = () => (
               <div className="bg-card rounded-lg border p-4 shadow-sm">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-display font-semibold text-sm text-foreground">42 Elm Street</span>
-                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">3 bids</span>
+                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">Available</span>
                 </div>
                 <p className="text-xs text-muted-foreground">Kitchen repair · Bathroom retile · Paint touch-up</p>
               </div>
               <div className="bg-card rounded-lg border p-4 shadow-sm">
                 <div className="flex justify-between items-center mb-2">
                   <span className="font-display font-semibold text-sm text-foreground">17 Oak Avenue</span>
-                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">5 bids</span>
+                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">Claimed</span>
                 </div>
                 <p className="text-xs text-muted-foreground">Full repaint · Carpet replacement · Deep clean</p>
               </div>
@@ -96,7 +96,7 @@ const AudienceSection = () => (
                 </li>
               ))}
             </ul>
-            <Button className="gap-2" asChild><Link to="/signup">Start Bidding on Jobs <ArrowRight size={18} /></Link></Button>
+            <Button className="gap-2" asChild><Link to="/signup">Start Claiming Jobs <ArrowRight size={18} /></Link></Button>
           </div>
         </div>
       </div>

@@ -5,12 +5,12 @@ const previews = [
     icon: LayoutDashboard,
     title: "Job Dashboard",
     desc: "Track all repair jobs across your property portfolio with real-time status updates.",
-    items: ["12 Active Jobs", "4 Pending Bids", "8 Completed"],
+    items: ["12 Active Jobs", "6 Published", "8 Completed"],
   },
   {
     icon: Store,
     title: "Contractor Marketplace",
-    desc: "Browse verified contractors, compare bids, and select the best fit for each job.",
+    desc: "Browse verified contractors and claim jobs instantly — first come, first served.",
     items: ["48 Contractors", "4.8★ Avg Rating", "2hr Response"],
   },
   {
