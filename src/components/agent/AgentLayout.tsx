@@ -5,12 +5,13 @@ import {
   SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar,
 } from "@/components/ui/sidebar";
 import { NavLink } from "@/components/NavLink";
-import { LayoutDashboard, BarChart3, Briefcase, FilePlus, Bell, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, BarChart3, Briefcase, FilePlus, Bell, Settings, LogOut, CalendarClock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const items = [
   { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
+  { title: "Readiness", url: "/dashboard/readiness", icon: CalendarClock },
   { title: "Jobs", url: "/dashboard/jobs", icon: Briefcase },
   { title: "Create Report", url: "/dashboard/create-report", icon: FilePlus },
   { title: "Notifications", url: "/dashboard/notifications", icon: Bell },
