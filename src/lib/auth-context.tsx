@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { User } from "./types";
 import { findUser, createUser, getUserById, getUsers } from "./mock-db";
 
@@ -12,15 +12,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
+  // Restore the session synchronously so route guards don't redirect on page refresh.
+  const [user, setUser] = useState<User | null>(() => {
     const id = localStorage.getItem("voidzero_current_user");
-    if (id) {
-      const u = getUserById(id);
-      if (u) setUser(u);
-    }
-  }, []);
+    return (id && getUserById(id)) || null;
+  });
 
   const login = (email: string, password: string): string | null => {
     const u = findUser(email, password);

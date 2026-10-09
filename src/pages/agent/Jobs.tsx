@@ -1,5 +1,5 @@
 import { useAuth } from "@/lib/auth-context";
-import { getJobsByAgent } from "@/lib/mock-db";
+import { getJobsByAgent, getPropertyById } from "@/lib/mock-db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -50,8 +50,10 @@ export default function AgentJobs() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                    {job.propertyId && <span className="font-medium text-foreground">{getPropertyById(job.propertyId)?.address}</span>}
                     <span>{job.category}</span>
+                    {!!job.durationDays && <span>{job.durationDays} day{job.durationDays === 1 ? "" : "s"}</span>}
                     <span>{job.priority} priority</span>
                     <span>£{job.jobAmount}</span>
                   </div>

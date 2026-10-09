@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { getNotifications, markNotificationRead } from "@/lib/mock-db";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bell, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Bell } from "lucide-react";
+import { NotificationCard } from "@/components/NotificationCard";
 
 export default function AgentNotifications() {
   const { user } = useAuth();
@@ -22,20 +22,7 @@ export default function AgentNotifications() {
         <Card><CardContent className="py-12 text-center text-muted-foreground"><Bell className="mx-auto h-8 w-8 mb-2 opacity-30" />No notifications</CardContent></Card>
       ) : (
         <div className="space-y-3">
-          {notifications.map(n => (
-            <Card key={n.id} className={n.read ? "opacity-60" : ""}>
-              <CardContent className="flex items-center justify-between py-4">
-                <div className="flex items-center gap-3">
-                  {!n.read && <div className="w-2 h-2 rounded-full bg-primary" />}
-                  <div>
-                    <p className="text-sm">{n.message}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(n.createdAt).toLocaleDateString()}</p>
-                  </div>
-                </div>
-                {!n.read && <Button size="sm" variant="ghost" onClick={() => handleRead(n.id)}><Check className="h-4 w-4" /></Button>}
-              </CardContent>
-            </Card>
-          ))}
+          {notifications.map(n => <NotificationCard key={n.id} notification={n} onRead={handleRead} />)}
         </div>
       )}
     </div>

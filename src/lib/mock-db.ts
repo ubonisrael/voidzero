@@ -1,16 +1,51 @@
-import { User, Job, Notification, ContractorProfile } from "./types";
+import {
+  User,
+  Job,
+  Notification,
+  ContractorProfile,
+  Property,
+  TurnoverRecord,
+} from "./types";
 
 const STORAGE_KEY = "voidzero_db";
+// Bump when SEED_DATA changes so browsers holding an older blob are reseeded.
+const DB_VERSION = 2;
 
 interface MockDB {
+  version: number;
   users: User[];
   jobs: Job[];
   notifications: Notification[];
   contractorProfiles: ContractorProfile[];
   savedJobs: Record<string, string[]>;
+  properties: Property[];
+  turnoverHistory: TurnoverRecord[];
+}
+
+function contractor(id: string, name: string, email: string): User {
+  return { id, name, email, role: "contractor", password: "password" };
+}
+
+function task(
+  fields: Pick<Job, "id" | "title" | "trade" | "durationDays" | "propertyId" | "jobAmount"> &
+    Partial<Job>,
+): Job {
+  return {
+    issues: [],
+    category: fields.trade!,
+    priority: "Medium",
+    description: "",
+    status: "in_progress",
+    agentId: "agent-1",
+    createdAt: "2026-11-01T09:00:00Z",
+    dependsOn: [],
+    canRunParallel: false,
+    ...fields,
+  };
 }
 
 const SEED_DATA: MockDB = {
+  version: DB_VERSION,
   users: [
     {
       id: "agent-1",
@@ -26,46 +61,218 @@ const SEED_DATA: MockDB = {
       role: "agent",
       password: "password",
     },
+    contractor("contractor-1", "Mike Johnson", "mike@build.com"),
+    contractor("contractor-2", "Sarah Chen", "sarah@build.com"),
+    contractor("contractor-3", "Dan Okafor", "dan@spark.com"),
+    contractor("contractor-4", "Priya Shah", "priya@spark.com"),
+    contractor("contractor-5", "Tom Reed", "tom@build.com"),
+    contractor("contractor-6", "Ravi Patel", "ravi@flow.com"),
+  ],
+  properties: [
     {
-      id: "contractor-1",
-      name: "Mike Johnson",
-      email: "mike@build.com",
-      role: "contractor",
-      password: "password",
+      id: "prop-oak",
+      agentId: "agent-1",
+      address: "42 Oak Lane",
+      checkoutDate: "2026-11-10",
+      targetReadyDate: "2026-11-18",
+      status: "in_turnover",
+      forecastHistory: [
+        { at: "2026-11-10T09:00:00Z", forecast: "2026-11-18", reason: "Checkout report created" },
+      ],
+      interventions: [],
     },
     {
-      id: "contractor-2",
-      name: "Sarah Chen",
-      email: "sarah@build.com",
-      role: "contractor",
-      password: "password",
+      id: "prop-maple",
+      agentId: "agent-1",
+      address: "8 Maple Drive",
+      checkoutDate: "2026-11-15",
+      targetReadyDate: "2026-11-20",
+      status: "in_turnover",
+      forecastHistory: [
+        { at: "2026-11-15T09:00:00Z", forecast: "2026-11-20", reason: "Checkout report created" },
+      ],
+      interventions: [],
+    },
+    {
+      id: "prop-king",
+      agentId: "agent-1",
+      address: "15 King Street",
+      checkoutDate: "2026-11-14",
+      targetReadyDate: "2026-11-22",
+      status: "in_turnover",
+      forecastHistory: [
+        { at: "2026-11-14T09:00:00Z", forecast: "2026-11-22", reason: "Checkout report created" },
+        {
+          at: "2026-11-15T11:00:00Z",
+          forecast: "2026-11-25",
+          reason: "Leak Repair delayed due to contractor availability",
+        },
+      ],
+      interventions: [],
+    },
+    {
+      id: "prop-elm",
+      agentId: "agent-2",
+      address: "15 Elm Street",
+      checkoutDate: "2026-11-10",
+      targetReadyDate: "2026-11-14",
+      status: "in_turnover",
+      forecastHistory: [
+        { at: "2026-11-10T09:00:00Z", forecast: "2026-11-13", reason: "Checkout report created" },
+      ],
+      interventions: [],
+    },
+    {
+      id: "prop-birch",
+      agentId: "agent-1",
+      address: "3 Birch Court",
+      checkoutDate: "2026-03-09",
+      targetReadyDate: "2026-03-14",
+      status: "ready_to_let",
+      forecastHistory: [
+        { at: "2026-03-09T10:00:00Z", forecast: "2026-03-14", reason: "Checkout report created" },
+      ],
+      interventions: [],
     },
   ],
   jobs: [
-    {
-      id: "job-1",
-      title: "Full Property Repaint – 42 Oak Lane",
-      issues: ["Wall damage", "Paint wear"],
-      category: "Painting",
-      priority: "Medium",
-      description: "Multiple rooms need repainting after tenant checkout.",
-      jobAmount: 1200,
-      status: "published",
-      agentId: "agent-1",
-      createdAt: "2026-03-20T10:00:00Z",
-    },
-    {
-      id: "job-2",
-      title: "Deep Clean – 8 Maple Drive",
-      issues: ["Dirty carpet", "General cleaning"],
-      category: "Cleaning",
+    // 42 Oak Lane: the main demonstration scenario
+    task({
+      id: "job-oak-elec",
+      title: "Electrical Repair",
+      trade: "Electrical",
       priority: "High",
-      description: "End-of-tenancy deep clean required.",
-      jobAmount: 450,
+      issues: ["Electrical fault"],
+      description: "Replace faulty sockets and light fittings in the living room and hallway.",
+      durationDays: 2,
+      propertyId: "prop-oak",
+      jobAmount: 420,
+      contractorId: "contractor-3",
+    }),
+    task({
+      id: "job-oak-plaster",
+      title: "Plaster Repair",
+      trade: "Plastering",
+      issues: ["Plaster damage"],
+      description: "Make good the walls opened up for the electrical work.",
+      durationDays: 1,
+      propertyId: "prop-oak",
+      jobAmount: 180,
+      contractorId: "contractor-1",
+      dependsOn: ["job-oak-elec"],
+    }),
+    task({
+      id: "job-oak-paint",
+      title: "Painting",
+      trade: "Painting",
+      issues: ["Wall damage", "Paint wear"],
+      description: "Repaint living room, hallway and bedroom.",
+      durationDays: 2,
+      propertyId: "prop-oak",
+      jobAmount: 650,
+      contractorId: "contractor-1",
+      dependsOn: ["job-oak-plaster"],
+    }),
+    task({
+      id: "job-oak-clean",
+      title: "Deep Cleaning",
+      trade: "Cleaning",
+      priority: "High",
+      issues: ["Dirty carpet", "General cleaning"],
+      description: "End-of-tenancy deep clean including carpets.",
+      durationDays: 1,
+      propertyId: "prop-oak",
+      jobAmount: 260,
       status: "published",
-      agentId: "agent-1",
-      createdAt: "2026-03-21T08:00:00Z",
-    },
+      dependsOn: ["job-oak-paint"],
+    }),
+    // 8 Maple Drive: on track, with a parallel task
+    task({
+      id: "job-maple-paint",
+      title: "Painting",
+      trade: "Painting",
+      issues: ["Paint wear"],
+      description: "Repaint all bedrooms.",
+      durationDays: 3,
+      propertyId: "prop-maple",
+      jobAmount: 780,
+      contractorId: "contractor-5",
+    }),
+    task({
+      id: "job-maple-handle",
+      title: "Handle Repair",
+      trade: "Repairs",
+      issues: ["Broken handle"],
+      description: "Replace kitchen cupboard handles.",
+      durationDays: 1,
+      propertyId: "prop-maple",
+      jobAmount: 90,
+      contractorId: "contractor-1",
+      canRunParallel: true,
+      estimatedStartDate: "2026-11-16",
+    }),
+    task({
+      id: "job-maple-clean",
+      title: "Deep Cleaning",
+      trade: "Cleaning",
+      priority: "High",
+      issues: ["General cleaning"],
+      description: "End-of-tenancy deep clean.",
+      durationDays: 1,
+      propertyId: "prop-maple",
+      jobAmount: 240,
+      contractorId: "contractor-2",
+      dependsOn: ["job-maple-paint"],
+    }),
+    // 15 King Street: delayed, no alternative plumber available
+    task({
+      id: "job-king-plumb",
+      title: "Leak Repair",
+      trade: "Plumbing",
+      priority: "High",
+      description: "Fix leaking pipe under the bathroom floor.",
+      durationDays: 2,
+      propertyId: "prop-king",
+      jobAmount: 380,
+      contractorId: "contractor-6",
+    }),
+    task({
+      id: "job-king-plaster",
+      title: "Plaster Repair",
+      trade: "Plastering",
+      issues: ["Plaster damage"],
+      description: "Re-plaster water-damaged ceiling.",
+      durationDays: 1,
+      propertyId: "prop-king",
+      jobAmount: 200,
+      contractorId: "contractor-5",
+      dependsOn: ["job-king-plumb"],
+    }),
+    task({
+      id: "job-king-paint",
+      title: "Painting",
+      trade: "Painting",
+      issues: ["Wall damage"],
+      description: "Repaint bathroom and landing.",
+      durationDays: 2,
+      propertyId: "prop-king",
+      jobAmount: 420,
+      contractorId: "contractor-5",
+      dependsOn: ["job-king-plaster"],
+    }),
+    task({
+      id: "job-king-clean",
+      title: "Deep Cleaning",
+      trade: "Cleaning",
+      priority: "High",
+      issues: ["General cleaning"],
+      description: "End-of-tenancy deep clean.",
+      durationDays: 1,
+      propertyId: "prop-king",
+      jobAmount: 220,
+      contractorId: "contractor-2",
+      dependsOn: ["job-king-paint"],
+    }),
     {
       id: "job-3",
       title: "Handle Repair – 15 Elm Street",
@@ -78,6 +285,11 @@ const SEED_DATA: MockDB = {
       agentId: "agent-2",
       contractorId: "contractor-1",
       createdAt: "2026-03-18T10:00:00Z",
+      propertyId: "prop-elm",
+      trade: "Repairs",
+      durationDays: 1,
+      dependsOn: [],
+      canRunParallel: false,
     },
     {
       id: "job-4",
@@ -91,6 +303,13 @@ const SEED_DATA: MockDB = {
       agentId: "agent-1",
       contractorId: "contractor-2",
       createdAt: "2026-03-09T10:00:00Z",
+      propertyId: "prop-birch",
+      trade: "Cleaning",
+      durationDays: 1,
+      dependsOn: [],
+      canRunParallel: false,
+      startedAt: "2026-03-13",
+      completedAt: "2026-03-13",
     },
   ],
   notifications: [
@@ -115,15 +334,41 @@ const SEED_DATA: MockDB = {
       read: true,
       createdAt: "2026-03-19T12:00:00Z",
     },
+    {
+      id: "n-4",
+      userId: "agent-1",
+      type: "property_ready",
+      title: "Property Ready",
+      message:
+        "All required turnover activities at 3 Birch Court are complete. Property status changed to Ready to Let.",
+      link: "/dashboard/readiness/prop-birch",
+      read: true,
+      createdAt: "2026-03-15T16:01:00Z",
+    },
+    {
+      id: "n-5",
+      userId: "agent-1",
+      type: "delay_risk",
+      title: "Delay Risk",
+      message: "Leak Repair at 15 King Street is expected to finish 3 days late.",
+      link: "/dashboard/readiness/prop-king",
+      read: false,
+      createdAt: "2026-10-08T11:00:00Z",
+    },
   ],
   contractorProfiles: [
     {
       userId: "contractor-1",
-      skills: ["Repairs", "Painting"],
+      skills: ["Repairs", "Painting", "Plastering"],
       experience: "5 years",
       location: "London",
       hourlyRate: 35,
       bio: "Experienced handyman specialising in property repairs.",
+      availability: "busy",
+      nextAvailableDate: "2026-11-12",
+      avgCompletionDays: 1.8,
+      jobsCompleted: 64,
+      onTimePct: 91,
     },
     {
       userId: "contractor-2",
@@ -132,15 +377,85 @@ const SEED_DATA: MockDB = {
       location: "Manchester",
       hourlyRate: 25,
       bio: "Professional cleaning services for residential properties.",
+      availability: "available",
+      nextAvailableDate: "2026-11-14",
+      avgCompletionDays: 1.0,
+      jobsCompleted: 112,
+      onTimePct: 96,
+    },
+    {
+      userId: "contractor-3",
+      skills: ["Electrical"],
+      experience: "8 years",
+      location: "London",
+      hourlyRate: 48,
+      bio: "NICEIC-registered electrician for rewires, fault finding and certification.",
+      availability: "busy",
+      nextAvailableDate: "2026-11-12",
+      avgCompletionDays: 2.4,
+      jobsCompleted: 87,
+      onTimePct: 78,
+    },
+    {
+      userId: "contractor-4",
+      skills: ["Electrical"],
+      experience: "6 years",
+      location: "London",
+      hourlyRate: 50,
+      bio: "Qualified electrician focused on fast turnarounds for letting agents.",
+      availability: "available",
+      nextAvailableDate: "2026-11-13",
+      avgCompletionDays: 1.9,
+      jobsCompleted: 53,
+      onTimePct: 94,
+    },
+    {
+      userId: "contractor-5",
+      skills: ["Painting", "Plastering"],
+      experience: "10 years",
+      location: "London",
+      hourlyRate: 32,
+      bio: "Painter and decorator, plastering and making good.",
+      availability: "busy",
+      nextAvailableDate: "2026-11-16",
+      avgCompletionDays: 2.2,
+      jobsCompleted: 140,
+      onTimePct: 88,
+    },
+    {
+      userId: "contractor-6",
+      skills: ["Plumbing"],
+      experience: "12 years",
+      location: "London",
+      hourlyRate: 55,
+      bio: "Gas Safe plumber: leaks, bathrooms and heating.",
+      availability: "busy",
+      nextAvailableDate: "2026-11-19",
+      avgCompletionDays: 2.6,
+      jobsCompleted: 98,
+      onTimePct: 82,
     },
   ],
-  savedJobs: { "contractor-1": ["job-1"] },
+  savedJobs: { "contractor-2": ["job-oak-clean"] },
+  turnoverHistory: [
+    { address: "3 Birch Court", checkoutDate: "2026-03-09", targetReadyDate: "2026-03-14", forecastReadyDate: "2026-03-14", actualReadyDate: "2026-03-14", interventions: 0, daysRecovered: 0 },
+    { address: "21 Cedar Road", checkoutDate: "2026-04-02", targetReadyDate: "2026-04-10", forecastReadyDate: "2026-04-10", actualReadyDate: "2026-04-13", delayCause: "Contractor availability", interventions: 0, daysRecovered: 0 },
+    { address: "7 Willow Close", checkoutDate: "2026-04-20", targetReadyDate: "2026-04-28", forecastReadyDate: "2026-04-29", actualReadyDate: "2026-04-28", interventions: 1, daysRecovered: 2 },
+    { address: "56 Ash Grove", checkoutDate: "2026-05-11", targetReadyDate: "2026-05-18", forecastReadyDate: "2026-05-18", actualReadyDate: "2026-05-22", delayCause: "Materials delay", interventions: 0, daysRecovered: 0 },
+    { address: "9 Holly Mews", checkoutDate: "2026-06-01", targetReadyDate: "2026-06-09", forecastReadyDate: "2026-06-11", actualReadyDate: "2026-06-10", delayCause: "Contractor availability", interventions: 1, daysRecovered: 1 },
+    { address: "14 Beech Avenue", checkoutDate: "2026-07-06", targetReadyDate: "2026-07-13", forecastReadyDate: "2026-07-13", actualReadyDate: "2026-07-13", interventions: 0, daysRecovered: 0 },
+    { address: "30 Rowan Street", checkoutDate: "2026-08-03", targetReadyDate: "2026-08-12", forecastReadyDate: "2026-08-13", actualReadyDate: "2026-08-15", delayCause: "Dependent task overran", interventions: 0, daysRecovered: 0 },
+    { address: "2 Poplar Way", checkoutDate: "2026-09-07", targetReadyDate: "2026-09-15", forecastReadyDate: "2026-09-17", actualReadyDate: "2026-09-16", delayCause: "Contractor availability", interventions: 1, daysRecovered: 2 },
+  ],
 };
 
 function loadDB(): MockDB {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const db = JSON.parse(raw) as MockDB;
+      if (db.version === DB_VERSION) return db;
+    }
   } catch {
     /* ignore */
   }
@@ -151,6 +466,11 @@ function loadDB(): MockDB {
 
 function saveDB(db: MockDB) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+}
+
+let idCounter = 0;
+export function newId(prefix: string) {
+  return `${prefix}-${Date.now()}-${idCounter++}`;
 }
 
 // --- Public API ---
@@ -191,6 +511,9 @@ export function getPublishedJobs() {
 export function getJobsByAgent(agentId: string) {
   return loadDB().jobs.filter((j) => j.agentId === agentId);
 }
+export function getJobsByProperty(propertyId: string) {
+  return loadDB().jobs.filter((j) => j.propertyId === propertyId);
+}
 export function createJob(job: Job) {
   const db = loadDB();
   db.jobs.push(job);
@@ -222,6 +545,35 @@ export function claimJob(jobId: string, contractorId: string) {
   return false;
 }
 
+// Properties
+export function getProperties() {
+  return loadDB().properties;
+}
+export function getPropertiesByAgent(agentId: string) {
+  return loadDB().properties.filter((p) => p.agentId === agentId);
+}
+export function getPropertyById(id: string) {
+  return loadDB().properties.find((p) => p.id === id);
+}
+export function createProperty(property: Property) {
+  const db = loadDB();
+  db.properties.push(property);
+  saveDB(db);
+}
+export function updateProperty(id: string, updates: Partial<Property>) {
+  const db = loadDB();
+  const idx = db.properties.findIndex((p) => p.id === id);
+  if (idx !== -1) {
+    db.properties[idx] = { ...db.properties[idx], ...updates };
+    saveDB(db);
+  }
+}
+
+// Turnover history (demonstration data)
+export function getTurnoverHistory() {
+  return loadDB().turnoverHistory;
+}
+
 // Notifications
 export function getNotifications(userId: string) {
   return loadDB().notifications.filter((n) => n.userId === userId);
@@ -230,6 +582,9 @@ export function addNotification(n: Notification) {
   const db = loadDB();
   db.notifications.push(n);
   saveDB(db);
+}
+export function notify(n: Omit<Notification, "id" | "read" | "createdAt">) {
+  addNotification({ ...n, id: newId("n"), read: false, createdAt: new Date().toISOString() });
 }
 export function markNotificationRead(id: string) {
   const db = loadDB();
@@ -241,6 +596,9 @@ export function markNotificationRead(id: string) {
 }
 
 // Contractor Profiles
+export function getContractorProfiles() {
+  return loadDB().contractorProfiles;
+}
 export function getContractorProfile(userId: string) {
   return loadDB().contractorProfiles.find((p) => p.userId === userId);
 }
@@ -252,6 +610,14 @@ export function upsertContractorProfile(profile: ContractorProfile) {
   if (idx !== -1) db.contractorProfiles[idx] = profile;
   else db.contractorProfiles.push(profile);
   saveDB(db);
+}
+export function updateContractorAvailability(userId: string, nextAvailableDate: string) {
+  const db = loadDB();
+  const profile = db.contractorProfiles.find((p) => p.userId === userId);
+  if (profile) {
+    profile.nextAvailableDate = nextAvailableDate;
+    saveDB(db);
+  }
 }
 
 // Saved Jobs

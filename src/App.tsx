@@ -16,6 +16,7 @@ import CreateReport from "./pages/agent/CreateReport";
 import AgentJobDetail from "./pages/agent/JobDetail";
 import AgentNotifications from "./pages/agent/Notifications";
 import AgentSettings from "./pages/agent/Settings";
+import ReadinessPlan from "./pages/agent/ReadinessPlan";
 import ContractorLayout from "./components/contractor/ContractorLayout";
 import ContractorOverview from "./pages/contractor/Overview";
 import ContractorAnalytics from "./pages/contractor/Analytics";
@@ -58,6 +59,8 @@ function AppRoutes() {
       <Route path="/dashboard" element={<RequireAgent><AgentLayout /></RequireAgent>}>
         <Route index element={<AgentOverview />} />
         <Route path="analytics" element={<AgentAnalytics />} />
+        <Route path="readiness" element={<ReadinessPlan />} />
+        <Route path="readiness/:propertyId" element={<ReadinessPlan />} />
         <Route path="jobs" element={<AgentJobs />} />
         <Route path="jobs/:jobId" element={<AgentJobDetail />} />
         <Route path="create-report" element={<CreateReport />} />
